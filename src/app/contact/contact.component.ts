@@ -1,6 +1,5 @@
 
 
-
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -24,13 +23,16 @@ interface Contact {
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './contact.component.html',
-  styleUrls: ['./contact.component.css']
+  styleUrl: './contact.component.css'
 })
 export class ContactComponent implements OnInit {
   contacts: Contact[] = [];
   trash: Contact[] = [];
-  editingContactId: number | null = null;
   searchTerm: string = '';
+
+  isAddContactPopupOpen: boolean = false;
+  isTrashPopupOpen: boolean = false;
+  editingContactId: number | null = null;
 
   contact: Contact = {
     id: 0,
@@ -57,30 +59,23 @@ export class ContactComponent implements OnInit {
 
   addContact() {
     if (this.editingContactId !== null) {
-      const contactIndex = this.contacts.findIndex(contact => contact.id === this.editingContactId);
-      if (contactIndex !== -1) {
+      const index = this.contacts.findIndex(c => c.id === this.editingContactId);
+      if (index !== -1) {
         this.contact.updatedAt = new Date();
-        this.contacts[contactIndex] = { ...this.contact };
+        this.contact.updatedBy = 'user';
+        this.contacts[index] = this.contact;
       }
-      alert('Contact modifié avec succès');
     } else {
       this.contact.id = new Date().getTime();
       this.contact.createdAt = new Date();
       this.contact.updatedAt = new Date();
       this.contacts.push(this.contact);
-      alert('Contact ajouté avec succès');
     }
 
     localStorage.setItem('contacts', JSON.stringify(this.contacts));
+    alert('Contact ajouté ou modifié avec succès');
     this.resetForm();
-  }
-
-  editContact(contactId: number) {
-    const contact = this.contacts.find(contact => contact.id === contactId);
-    if (contact) {
-      this.contact = { ...contact };
-      this.editingContactId = contactId;
-    }
+    this.closeAddContactPopup();
   }
 
   resetForm() {
@@ -127,14 +122,35 @@ export class ContactComponent implements OnInit {
     }
   }
 
-  searchContacts() {
-    if (this.searchTerm.trim() === '') {
-      this.loadContacts();
-    } else {
-      this.contacts = this.contacts.filter(contact =>
-        contact.nom.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        contact.telephone.includes(this.searchTerm)
-      );
+  editContact(contactId: number) {
+    const contact = this.contacts.find(contact => contact.id === contactId);
+    if (contact) {
+      this.contact = { ...contact };
+      this.editingContactId = contactId;
+      this.openAddContactPopup();
     }
+  }
+
+  searchContacts() {
+    const term = this.searchTerm.toLowerCase();
+    this.contacts = JSON.parse(localStorage.getItem('contacts') || '[]').filter((contact: Contact) =>
+      contact.nom.toLowerCase().includes(term) || contact.telephone.includes(term)
+    );
+  }
+
+  openAddContactPopup() {
+    this.isAddContactPopupOpen = true;
+  }
+
+  closeAddContactPopup() {
+    this.isAddContactPopupOpen = false;
+  }
+
+  openTrashPopup() {
+    this.isTrashPopupOpen = true;
+  }
+
+  closeTrashPopup() {
+    this.isTrashPopupOpen = false;
   }
 }

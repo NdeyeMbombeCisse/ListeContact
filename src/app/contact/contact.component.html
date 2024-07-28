@@ -1,50 +1,117 @@
 
 
-   <div>
-    <h2>Gestion des contacts</h2>
-    <form (ngSubmit)="addContact()">
-      <div>
-        <label for="nom">Nom:</label>
-        <input type="text" id="nom" [(ngModel)]="contact.nom" name="nom" required>
-      </div>
-      <div>
-        <label for="prenom">Prénom:</label>
-        <input type="text" id="prenom" [(ngModel)]="contact.prenom" name="prenom" required>
-      </div>
-      <div>
-        <label for="email">Email:</label>
-        <input type="email" id="email" [(ngModel)]="contact.email" name="email" required>
-      </div>
-      <div>
-        <label for="telephone">Téléphone:</label>
-        <input type="tel" id="telephone" [(ngModel)]="contact.telephone" name="telephone" required>
-      </div>
-      <div>
-        <label for="description">Description:</label>
-        <textarea id="description" [(ngModel)]="contact.description" name="description" required></textarea>
-      </div>
-      <button type="submit">{{ editingContactId !== null ? 'Modifier' : 'Ajouter' }} le contact</button>
-    </form>
-    <h3>Liste des contacts</h3>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <link rel="stylesheet" href="contact.component.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    </head>
+<body>
     <div>
-      <input type="text" [(ngModel)]="searchTerm" (input)="searchContacts()" placeholder="Rechercher par nom ou numéro">
-    </div>
-    <ul>
-      <li *ngFor="let contact of contacts">
-        {{ contact.nom }} {{ contact.prenom }} - {{ contact.email }}
-        <button (click)="editContact(contact.id)">Modifier</button>
-        <button (click)="deleteContact(contact.id)">Supprimer</button>
-        <button (click)="viewDetails(contact.id)">Voir détails</button>
-      </li>
-    </ul>
-    <h3>Corbeille</h3>
-    <ul>
-      <li *ngFor="let contact of trash">
-        {{ contact.nom }} {{ contact.prenom }} - {{ contact.email }}
-        <button (click)="restoreContact(contact.id)">Restaurer</button>
-      </li>
-    </ul>
-  </div>
-   
+        <header>
+            <nav>
+            <button (click)="openAddContactPopup()">Ajouter un contact</button>
+             <button (click)="openTrashPopup()">Voir la corbeille</button>
+            
 
-   
+            </nav>
+        </header>
+        
+        
+        <h1>Liste des contacts</h1>
+        <div class="input-container">
+            <input  class="search" type="text" [(ngModel)]="searchTerm" (input)="searchContacts()" placeholder="  Rechercher par nom ou numéro"> 
+           
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Email</th>
+                    <th>Téléphone</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let contact of contacts">
+                    <td>{{ contact.nom }}</td>
+                    <td>{{ contact.prenom }}</td>
+                    <td>{{ contact.email }}</td>
+                    <td>{{ contact.telephone }}</td>
+                    <td>
+                        <a (click)="editContact(contact.id)"><i class="fa-regular 2xs fa-pen-to-square" style="color: green;"></i></a>
+                        <a (click)="deleteContact(contact.id)"><i class="fa-solid  2xs fa-trash" style="color: red;"></i></a>
+                        <a (click)="viewDetails(contact.id)"><i class="fa-solid 2xs fa-eye" style="color: gray;"></i></a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ajouter Contact Popup -->
+    <div *ngIf="isAddContactPopupOpen" class="popup">
+        <div class="popup-content">
+            <span class="close" (click)="closeAddContactPopup()">&times;</span>
+            <form (ngSubmit)="addContact()">
+                <h1>{{ editingContactId !== null ? 'Modifier le contact' : 'Ajouter un contact' }}</h1>
+                <div>
+                    <label for="nom">Nom:</label>
+                    <input type="text" id="nom" [(ngModel)]="contact.nom" name="nom" required>
+                </div>
+                <div>
+                    <label for="prenom">Prénom:</label>
+                    <input type="text" id="prenom" [(ngModel)]="contact.prenom" name="prenom" required>
+                </div>
+                <div>
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" [(ngModel)]="contact.email" name="email" required>
+                </div>
+                <div>
+                    <label for="telephone">Téléphone:</label>
+                    <input type="tel" id="telephone" [(ngModel)]="contact.telephone" name="telephone" required>
+                </div>
+                <div>
+                    <label for="description">Description:</label>
+                    <textarea id="description" [(ngModel)]="contact.description" name="description" required></textarea>
+                </div>
+                <button type="submit" class="bouton">{{ editingContactId !== null ? 'Modifier' : 'Ajouter' }} le contact</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- restauration Popup -->
+    <div *ngIf="isTrashPopupOpen" class="popup">
+        <div class="popup-content2">
+            <span class="close" (click)="closeTrashPopup()">&times;</span>
+            <h2>Corbeille</h2>
+            <table class="matable"> 
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Email</th>
+                        <th>Téléphone</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let contact of trash">
+                        <td>{{ contact.nom }}</td>
+                        <td>{{ contact.prenom }}</td>
+                        <td>{{ contact.email }}</td>
+                        <td>{{ contact.telephone }}</td>
+                        <td>
+                            <button (click)="restoreContact(contact.id)" class="bouton">Restaurer</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
+
