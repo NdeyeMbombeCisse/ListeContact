@@ -1,15 +1,49 @@
-<!-- <div class="login-form">
-    <h2>Connexion</h2>
-    <form (ngSubmit)="onLogin()">
-      <div>
-        <label for="email">Email</label>
-        <input type="email" id="email" [(ngModel)]="loginObj.email" name="email" required>
-      </div>
-      <div>
-        <label for="password">Mot de passe</label>
-        <input type="password" id="password" [(ngModel)]="loginObj.password" name="password" required>
-      </div>
-      <button type="submit">Se connecter</button>
-    </form>
-  </div> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+  <div *ngIf="!isLoggedIn()"  class="fieldset">
+    <div *ngIf="!showSignup">
+      <h1>Connexion</h1>
+      <form (ngSubmit)="onLogin()">
+        <label for="login-email">Email:</label>
+        <input id="login-email" [(ngModel)]="loginObj.email" name="loginEmail" required type="email">
+        <br>
+        <label for="login-password">Mot de passe:</label>
+        <input id="login-password" [(ngModel)]="loginObj.password" name="loginPassword" required type="password">
+        <br>
+        <button type="submit">Se connecter</button>
+      </form>
+      <!-- <p><a href="" (click)="toggleForm()">Créer un compte</a></p> -->
+      <p><a href="javascript:void(0);" (click)="toggleForm()">Créer un compte</a></p>
+    </div>
   
+    <div *ngIf="showSignup">
+      <h1>Inscription</h1>
+      <form (ngSubmit)="onSignup()">
+        <label for="signup-email">Email:</label>
+        <input id="signup-email" [(ngModel)]="signupObj.email" name="signupEmail" required type="email">
+        <br>
+        <label for="signup-password">Mot de passe:</label>
+        <input id="signup-password" [(ngModel)]="signupObj.password" name="signupPassword" required type="password">
+        <br>
+        <button type="submit">S'inscrire</button>
+      </form>
+      <p><a href="#" (click)="toggleForm()">Déjà un compte? Se connecter</a></p>
+    </div>
+  </div>
+  
+  <div *ngIf="isLoggedIn()">
+    <p>Vous êtes connecté.</p>
+    <button (click)="onLogout()">Se déconnecter</button>
+  </div>
+  
+  
+  
+</body>
+</html>
