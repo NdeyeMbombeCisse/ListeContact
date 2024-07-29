@@ -72,7 +72,7 @@ export class ContactComponent implements OnInit {
   // Méthode qui permet de charger les données depuis le localStorage
   loadContacts() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    const userId = currentUser.id; // Assurez-vous que `currentUser` contient l'id de l'utilisateur
+    const userId = currentUser.id; 
 
     if (userId) {
       this.contacts = JSON.parse(localStorage.getItem('contacts') || '[]').filter((contact: Contact) =>
@@ -98,7 +98,7 @@ export class ContactComponent implements OnInit {
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
     const userId = currentUser.id;
 
-    if (currentUser ) {
+    if (userId) {
       if (this.editingContactId !== null) {
         const index = this.contacts.findIndex(c => c.id === this.editingContactId);
         if (index !== -1) {
